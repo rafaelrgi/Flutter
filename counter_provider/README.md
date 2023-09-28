@@ -1,3 +1,6 @@
-# counter_provider
+# Contador Com Provider
 
-A new Flutter project.
+Implementação do clássico Contador (app de exemplo dos primórdios do Flutter), implementando o gerenciador de estado
+(StateManagement) Provider.
+
+<img src="counter_provider/_screenshot.jpg" width="512">
