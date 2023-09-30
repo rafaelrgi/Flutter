@@ -1,4 +1,4 @@
-# Ccalculadora IMC (com Provider)
+# Calculadora IMC (com Provider)
 
 Calculadora de IMC (índice de massa corpórea) utilizando o gerenciador de estado
 (StateManagement) Provider.
