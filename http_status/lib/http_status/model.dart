@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:http_status/services/http.dart';
@@ -20,6 +21,15 @@ class StatusDto {
 class HttpStatus extends ChangeNotifier {
   int getCount() => _status.length;
   String getCode(int index) => _status[index];
+
+  int getRandomCode() {
+    final index = Random().nextInt(_status.length);
+    final code =  getCode(index);
+    // if (int.tryParse(code) == null) {
+    //   return getRandomCode();
+    // }
+    return int.tryParse(code) ?? getRandomCode();
+  }
 
   Future<StatusDto> getStatus(int codigo) async {
     String s = await Http.get(codigo);
