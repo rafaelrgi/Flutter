@@ -1,8 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:window_manager/window_manager.dart';
+import 'package:screen_retriever/screen_retriever.dart';
 
-import 'git/git_page.dart';
+import 'features/git_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
+
+  var display = await screenRetriever.getPrimaryDisplay();
+  WindowOptions windowOptions = WindowOptions(
+    center: false,
+    skipTaskbar: false,
+    minimumSize: Size(860, display.size.height - 64),
+    size: Size(880, display.size.height - 64),
+  );
+
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+    await Future.delayed(const Duration(milliseconds: 256));
+    await windowManager.setBounds(null,
+        size: Size(880, display.size.height - 32),
+        position: Offset(display.size.width - 880, 2));
+    await windowManager.setAlwaysOnTop(true);
+    await Future.delayed(const Duration(milliseconds: 256));
+    await windowManager.setBounds(null,
+        size: Size(880, display.size.height - 32),
+        position: Offset(display.size.width - 880, 2));
+  });
+
   runApp(const MyApp());
 }
 
@@ -12,7 +39,6 @@ class MyApp extends StatelessWidget {
   static const _colorLight = Colors.blue;
   static const _colorDark = Color.fromRGBO(26, 35, 126, 1);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -35,13 +61,13 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.dark,
         scaffoldBackgroundColor: Colors.black26,
         colorScheme: const ColorScheme.dark(
-          primary: _colorLight,
-          onPrimary: Colors.white,
-          primaryContainer: _colorDark
-          //secondary: _colorLight,
-          // onPrimaryContainer: Colors.white,
-          // onSurface: Colors.white,
-        ),
+            primary: _colorLight,
+            onPrimary: Colors.white,
+            primaryContainer: _colorDark
+            //secondary: _colorLight,
+            // onPrimaryContainer: Colors.white,
+            // onSurface: Colors.white,
+            ),
         appBarTheme: const AppBarTheme(backgroundColor: Colors.black26),
       ),
       themeMode: ThemeMode.system,
