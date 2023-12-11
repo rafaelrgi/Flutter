@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class GitPage extends StatefulWidget {
-  const GitPage({super.key, required this.title});
-
-  final String title;
+  const GitPage({super.key});
 
   @override
   State<GitPage> createState() => _GitPageState();
@@ -73,7 +71,7 @@ class _GitPageState extends State<GitPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-        title: Text(widget.title),
+        title: const Text('Git Commands Generator'),
       ),
       body: MediaQuery.of(context).size.width < 790
           ? const SizedBox()
