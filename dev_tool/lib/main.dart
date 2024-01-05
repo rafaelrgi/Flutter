@@ -72,7 +72,7 @@ class MyApp extends StatelessWidget {
       ),
       themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
-      home: const GitPage(title: 'Git Commands Generator'),
+      home: const GitPage(),
     );
   }
 }

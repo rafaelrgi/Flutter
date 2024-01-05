@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+//'Git Commands Generator'
+
 class GitPage extends StatefulWidget {
   const GitPage({super.key});
 
