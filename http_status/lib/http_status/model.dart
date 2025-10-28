@@ -24,10 +24,7 @@ class HttpStatus extends ChangeNotifier {
 
   int getRandomCode() {
     final index = Random().nextInt(_status.length);
-    final code =  getCode(index);
-    // if (int.tryParse(code) == null) {
-    //   return getRandomCode();
-    // }
+    final code = getCode(index);
     return int.tryParse(code) ?? getRandomCode();
   }
 
