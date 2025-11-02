@@ -26,11 +26,22 @@ class HomeView extends StatelessWidget {
               child: ListenableBuilder(
                 listenable: calculatorViewModel,
                 builder: (context, child) {
-                  return Text(
-                    calculatorViewModel.display,
-                    textAlign: TextAlign.right,
-                    style: Theme.of(context).textTheme.headlineLarge,
-                    overflow: TextOverflow.ellipsis,
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        calculatorViewModel.previous,
+                        textAlign: TextAlign.left,
+                        style: Theme.of(context).textTheme.bodySmall,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        calculatorViewModel.display,
+                        textAlign: TextAlign.right,
+                        style: Theme.of(context).textTheme.headlineLarge,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   );
                 },
               ),

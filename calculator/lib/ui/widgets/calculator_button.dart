@@ -13,6 +13,7 @@ class CalculatorButton extends StatelessWidget {
     return label.isEmpty
         ? const SizedBox.shrink()
         : InkWell(
+            enableFeedback: false,
             onTap: () => calculatorViewModel.button(label),
             child: Container(
               alignment: Alignment.center,

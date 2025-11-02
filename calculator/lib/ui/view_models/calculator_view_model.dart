@@ -1,7 +1,7 @@
 import 'package:calculator/core/str_utils.dart';
 import 'package:flutter/material.dart';
 
-//Singleton para facilitar; UNDONE: implementar injeção de dependência depois
+//Singleton para facilitar; UNDONE: implementar injeção de dependência
 CalculatorViewModel calculatorViewModel = CalculatorViewModel();
 
 enum _Operations { none, add, subtract, multiply, divide }
@@ -9,14 +9,14 @@ enum _Operations { none, add, subtract, multiply, divide }
 class CalculatorViewModel extends ChangeNotifier {
   //
 
-  double _value = 0;
   String _display = '0';
+  double _op1 = 0;
+  _Operations _operator = _Operations.none;
   bool _insertMode = false;
-  _Operations _operation = _Operations.none;
 
   String get display => _display;
-  String get value => _value == 0 ? '' : _value.asString(true);
-  String get operation => _getOperation();
+  String get previous => '${_op1.asString(true)} ${_getOperator()}';
+  String get operator => _getOperator();
 
   void button(String button) {
     switch (button) {
@@ -58,9 +58,9 @@ class CalculatorViewModel extends ChangeNotifier {
   }
 
   void _buttonClear() {
-    _value = 0;
+    _op1 = 0;
     _display = '0';
-    _operation = _Operations.none;
+    _operator = _Operations.none;
   }
 
   void _buttonClearEntry() {
@@ -69,8 +69,8 @@ class CalculatorViewModel extends ChangeNotifier {
 
   void _buttonDecimal() {
     if (_insertMode) {
-      if (_value == 0) {
-        _value = _getValueFromDisplay();
+      if (_op1 == 0) {
+        _op1 = _getValueFromDisplay();
       }
       _display = '0,';
       _insertMode = false;
@@ -89,30 +89,24 @@ class CalculatorViewModel extends ChangeNotifier {
   }
 
   void _buttonPlus() {
-    _applyPreviousOperation();
-    _operation = _Operations.add;
+    _doOperation(_Operations.add);
   }
 
   void _buttonMinus() {
-    _applyPreviousOperation();
-    _operation = _Operations.subtract;
+    _doOperation(_Operations.subtract);
   }
 
   void _buttonMultiply() {
-    _applyPreviousOperation();
-    _operation = _Operations.multiply;
+    _doOperation(_Operations.multiply);
   }
 
   void _buttonDivide() {
-    _applyPreviousOperation();
-    _operation = _Operations.divide;
+    _doOperation(_Operations.divide);
   }
 
   void _buttonTotal() {
-    _applyPreviousOperation();
-    _display = _value.asString(true);
-    _value = 0;
-    _operation = _Operations.none;
+    _doOperation(_Operations.none);
+    _op1 = 0;
   }
 
   double _getValueFromDisplay() {
@@ -123,8 +117,8 @@ class CalculatorViewModel extends ChangeNotifier {
         0;
   }
 
-  String _getOperation() {
-    switch (_operation) {
+  String _getOperator() {
+    switch (_operator) {
       case _Operations.add:
         return '+';
       case _Operations.subtract:
@@ -138,34 +132,44 @@ class CalculatorViewModel extends ChangeNotifier {
     }
   }
 
-  void _applyPreviousOperation() {
-    if (_insertMode) {
-      if (_value == 0) {
-        _value = _getValueFromDisplay();
-      }
+  double _calculate(double op1, double op2, _Operations operator) {
+    switch (operator) {
+      case _Operations.add:
+        return op1 + op2;
+      case _Operations.subtract:
+        return op1 - op2;
+      case _Operations.multiply:
+        return op1 * op2;
+      case _Operations.divide:
+        if (op2 != 0) {
+          return op1 / op2;
+        }
+      default:
+        return 0;
+    }
+    return 0;
+  }
+
+  void _doOperation(_Operations operator) {
+    //entering negative number?
+    if (operator == _Operations.subtract && _operator != _Operations.add) {
+      _display = '-';
+      _insertMode = false;
       return;
     }
-    var x = _getValueFromDisplay();
-    switch (_operation) {
-      case _Operations.add:
-        _value += x;
-        break;
-      case _Operations.subtract:
-        _value -= x;
-        break;
-      case _Operations.multiply:
-        _value *= x;
-        break;
-      case _Operations.divide:
-        if (x != 0) {
-          _value /= x;
-        }
-        break;
-      case _Operations.none:
-        _value = x;
-        break;
+
+    //first operation?
+    if (_insertMode || _operator == _Operations.none) {
+      _operator = operator;
     }
-    _display = _value.asString(true);
+    if (_insertMode) return;
+
+    //do previous calculation from stack
+    var op2 = _getValueFromDisplay();
+    _op1 = (_op1 == 0) ? _op1 = op2 : _calculate(_op1, op2, _operator);
+    _display = _op1.asString(true);
     _insertMode = true;
+    //store new operation
+    _operator = operator;
   }
 }
