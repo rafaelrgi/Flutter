@@ -7,9 +7,10 @@ class TodoDomain {
 
   static List<Todo> get todos => _todos;
 
-  static Future<void> fetch() async {
+  static Future<List<Todo>> fetch() async {
     _todos = [];
     _todos = await todoRepos.fetch();
+    return _todos;
   }
 
   static Future<void> save(Todo todo) async {

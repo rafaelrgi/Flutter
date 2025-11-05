@@ -8,15 +8,9 @@ final todoViewModel = TodoViewModel();
 class TodoViewModel extends ChangeNotifier {
   //
   bool _isLoading = false;
-  String _loadingError = '';
 
   List<Todo> get todos => TodoDomain.todos;
   bool get isLoading => _isLoading;
-  String get loadingError => _loadingError;
-
-  TodoViewModel() {
-    refreshList();
-  }
 
   Future<String> onItemTap(int index) async {
     todos[index].isDone = !todos[index].isDone;
@@ -29,18 +23,10 @@ class TodoViewModel extends ChangeNotifier {
     return error;
   }
 
-  Future<void> refreshList() async {
-    _loadingError = '';
-    _isLoading = true;
-    notifyListeners();
+  Future<List<Todo>> fetchList() async {
     try {
-      await TodoDomain.fetch();
-    } catch (e) {
-      _loadingError = e.toString();
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
+      return await TodoDomain.fetch();
+    } finally {}
   }
 
   void checkItem(Todo item) {

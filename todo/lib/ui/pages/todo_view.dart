@@ -9,6 +9,41 @@ class TodoView extends StatelessWidget {
 
   const TodoView({super.key, required this.index});
 
+  Future<void> saveItem(BuildContext ctx, int index, Todo todo) async {
+    var error = await todoViewModel.saveItem(index, todo);
+    //error
+    if (error.isNotEmpty) {
+      if (ctx.mounted) {
+        UiUtils.errorDialog(ctx, error, 'Saving failed!');
+        return;
+      }
+    }
+    //sucess
+    if (ctx.mounted) {
+      Navigator.of(ctx).pop();
+      UiUtils.toast(ctx, 'Item saved!');
+    }
+  }
+
+  void removeItem(BuildContext ctx, int index) {
+    UiUtils.yesNoDialog(ctx, 'Confirm item deletion?', 'Delete item', () async {
+      Navigator.of(ctx).pop();
+      //error
+      var error = await todoViewModel.removeItem(index);
+      if (error.isNotEmpty) {
+        if (ctx.mounted) {
+          UiUtils.errorDialog(ctx, error, 'Deletion failed!');
+        }
+        return;
+      }
+      //sucess
+      if (ctx.mounted) {
+        Navigator.of(ctx).pop();
+        UiUtils.toast(ctx, 'Item deleted');
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext _) {
     Todo todo = index >= 0 ? Todo.copy(todoViewModel.todos[index]) : Todo();
@@ -115,41 +150,5 @@ class TodoView extends StatelessWidget {
               );
       },
     );
-  }
-
-  Future<void> saveItem(BuildContext ctx, int index, Todo todo) async {
-    var error = await todoViewModel.saveItem(index, todo);
-    //error
-    if (error.isNotEmpty) {
-      if (ctx.mounted) {
-        UiUtils.errorDialog(ctx, error, 'Saving failed!');
-        //UiUtils.alertDialog(ctx, error, 'Saving failed!').then((value) => {});
-        return;
-      }
-    }
-    //sucess
-    if (ctx.mounted) {
-      Navigator.of(ctx).pop();
-      UiUtils.toast(ctx, 'Item saved!');
-    }
-  }
-
-  void removeItem(BuildContext ctx, int index) {
-    UiUtils.yesNoDialog(ctx, 'Confirm item deletion?', 'Delete item', () async {
-      Navigator.of(ctx).pop();
-      //error
-      var error = await todoViewModel.removeItem(index);
-      if (error.isNotEmpty) {
-        if (ctx.mounted) {
-          UiUtils.errorDialog(ctx, error, 'Deletion failed!');
-        }
-        return;
-      }
-      //sucess
-      if (ctx.mounted) {
-        Navigator.of(ctx).pop();
-        UiUtils.toast(ctx, 'Item deleted');
-      }
-    });
   }
 }
