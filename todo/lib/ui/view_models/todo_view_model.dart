@@ -8,9 +8,11 @@ final todoViewModel = TodoViewModel();
 class TodoViewModel extends ChangeNotifier {
   //
   bool _isLoading = false;
+  String _loadingError = '';
 
   List<Todo> get todos => TodoDomain.todos;
   bool get isLoading => _isLoading;
+  String get loadingError => _loadingError;
 
   TodoViewModel() {
     refreshList();
@@ -28,10 +30,13 @@ class TodoViewModel extends ChangeNotifier {
   }
 
   Future<void> refreshList() async {
+    _loadingError = '';
     _isLoading = true;
     notifyListeners();
     try {
       await TodoDomain.fetch();
+    } catch (e) {
+      _loadingError = e.toString();
     } finally {
       _isLoading = false;
       notifyListeners();

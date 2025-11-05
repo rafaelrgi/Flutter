@@ -23,6 +23,10 @@ class TodosView extends StatelessWidget {
     return ListenableBuilder(
       listenable: todoViewModel,
       builder: (context, __) {
+        if (todoViewModel.loadingError.isNotEmpty) {
+          return _loadingError(context, todoViewModel.loadingError);
+        }
+
         return todoViewModel.isLoading
             ? const Padding(
                 padding: EdgeInsetsGeometry.all(64),
@@ -92,5 +96,32 @@ class TodosView extends StatelessWidget {
     } else {
       UiUtils.toast(ctx, 'Item saved!');
     }
+  }
+
+  Widget _loadingError(BuildContext ctx, String loadingError) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Align(
+        alignment: AlignmentGeometry.center,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              loadingError,
+              style: Theme.of(
+                ctx,
+              ).textTheme.bodyLarge?.copyWith(color: Colors.red),
+            ),
+            Divider(height: 16, thickness: 1, color: Colors.grey),
+            const SizedBox(height: 8),
+            TextButton(
+              onPressed: () => todoViewModel.refreshList(),
+              child: const Text('Retry!'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
