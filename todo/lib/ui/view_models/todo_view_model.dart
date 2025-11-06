@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todo/domain/todo_domain.dart';
 import 'package:todo/domain/models/todo.dart';
+import 'package:todo/core/config.dart';
 
 //Singleton para facilitar; UNDONE: implementar injeção de dependência
 final todoViewModel = TodoViewModel();
@@ -11,32 +12,46 @@ class TodoViewModel extends ChangeNotifier {
 
   List<Todo> get todos => TodoDomain.todos;
   bool get isLoading => _isLoading;
+  DataSources get dataSource => TodoDomain.dataSource;
 
-  Future<String> onItemTap(int index) async {
+  Future<void> setDataSource(DataSources ds) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      await TodoDomain.setDataSource(ds);
+      //do not auto reload; await fetchAll();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void onCheckItem(Todo item) {
+    item.isDone = !item.isDone;
+    notifyListeners();
+  }
+
+  void onItemTitleChange(Todo item, String text) {
+    item.title = text;
+    notifyListeners();
+  }
+
+  Future<List<Todo>> fetchAll() async {
+    try {
+      return await TodoDomain.fetch();
+    } finally {}
+  }
+
+  Future<String> checkAndSaveItem(int index) async {
     todos[index].isDone = !todos[index].isDone;
     String error = await saveItem(index, todos[index]);
+
     //if failed, restore state
     if (error.isNotEmpty) {
       todos[index].isDone = !todos[index].isDone;
       notifyListeners();
     }
     return error;
-  }
-
-  Future<List<Todo>> fetchList() async {
-    try {
-      return await TodoDomain.fetch();
-    } finally {}
-  }
-
-  void checkItem(Todo item) {
-    item.isDone = !item.isDone;
-    notifyListeners();
-  }
-
-  void textItem(Todo item, String text) {
-    item.title = text;
-    notifyListeners();
   }
 
   Future<String> removeItem(int index) async {

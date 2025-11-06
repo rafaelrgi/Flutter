@@ -101,7 +101,7 @@ class TodoView extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           InkWell(
-                            onTap: () => todoViewModel.checkItem(todo),
+                            onTap: () => todoViewModel.onCheckItem(todo),
                             child: Row(
                               children: [
                                 Icon(
@@ -118,7 +118,7 @@ class TodoView extends StatelessWidget {
                           TextFormField(
                             initialValue: todo.title,
                             onChanged: (value) =>
-                                todoViewModel.textItem(todo, value),
+                                todoViewModel.onItemTitleChange(todo, value),
                             decoration: InputDecoration(
                               labelText: 'Todo',
                               errorText: todo.title.trim().isNotEmpty

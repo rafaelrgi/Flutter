@@ -1,5 +1,7 @@
+import 'package:todo/core/config.dart';
 import 'package:todo/core/ui_utils.dart';
 import 'package:todo/domain/models/todo.dart';
+import 'package:todo/ui/pages/choose_datasource.dart';
 import 'package:todo/ui/pages/todo_view.dart';
 import 'package:todo/ui/view_models/todo_view_model.dart';
 import 'package:flutter/material.dart';
@@ -21,21 +23,10 @@ class TodosView extends StatelessWidget {
     );
   }
 
-  Future<void> _onItemTap(BuildContext ctx, int index) async {
-    var error = await todoViewModel.onItemTap(index);
-    if (!ctx.mounted) return;
-
-    if (error.isNotEmpty) {
-      UiUtils.alertDialog(ctx, error, 'Saving failed');
-    } else {
-      UiUtils.toast(ctx, 'Item saved!');
-    }
-  }
-
   @override
   Widget build(BuildContext ctx) {
     return FutureBuilder<List<Todo>>(
-      future: todoViewModel.fetchList(),
+      future: todoViewModel.fetchAll(),
       builder: (BuildContext _, AsyncSnapshot<List<Todo>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return _page(ctx, false, Center(child: CircularProgressIndicator()));
@@ -49,13 +40,57 @@ class TodosView extends StatelessWidget {
     );
   }
 
+  Future<void> _onItemTap(BuildContext ctx, int index) async {
+    var error = await todoViewModel.checkAndSaveItem(index);
+    if (!ctx.mounted) return;
+
+    if (error.isNotEmpty) {
+      UiUtils.alertDialog(ctx, error, 'Saving failed');
+    } else {
+      UiUtils.toast(ctx, 'Item saved!');
+    }
+  }
+
   void _loadData(BuildContext ctx) {
     (ctx as Element).markNeedsBuild();
   }
 
+  Future<void> _changeDataSource(BuildContext ctx) async {
+    await showDialog(
+      context: ctx,
+      barrierDismissible: false,
+      builder: (BuildContext ctx) {
+        return Dialog(child: ChooseDatasource());
+      },
+    );
+    if (ctx.mounted) _loadData(ctx);
+  }
+
+  IconData _dataSourceIcon() {
+    switch (todoViewModel.dataSource) {
+      case DataSources.memory:
+        return Icons.memory_outlined;
+      case DataSources.remoteApi:
+        return Icons.cloud_outlined;
+      case DataSources.localDb:
+        return Icons.sd_storage_outlined;
+      case DataSources.none:
+        return Icons.cable_sharp;
+    }
+  }
+
   Widget _page(BuildContext ctx, bool floatingActionBtn, Widget body) {
     return Scaffold(
-      appBar: AppBar(title: const Text(_title)),
+      appBar: AppBar(
+        title: const Text(_title),
+        actions: [
+          IconButton(
+            icon: Icon(_dataSourceIcon()),
+            tooltip: 'Change data source',
+            onPressed: () => _changeDataSource(ctx),
+          ),
+        ],
+      ),
       body: body,
       floatingActionButton: floatingActionBtn
           ? _floatingActionButton(ctx)
