@@ -39,6 +39,7 @@ class CalculatorViewModel extends ChangeNotifier {
         _buttonMinus();
         break;
       case '÷':
+      case '/':
         _buttonDivide();
         break;
       case 'x':
@@ -153,6 +154,8 @@ class CalculatorViewModel extends ChangeNotifier {
   void _doOperation(_Operations operator) {
     //entering negative number?
     if (operator == _Operations.subtract && _operator != _Operations.add) {
+      _op1 = _getValueFromDisplay();
+      _operator = _Operations.subtract;
       _display = '-';
       _insertMode = false;
       return;
@@ -166,6 +169,10 @@ class CalculatorViewModel extends ChangeNotifier {
 
     //do previous calculation from stack
     var op2 = _getValueFromDisplay();
+    //x-  -y >> x - y
+    if (_operator == _Operations.subtract && op2 < 0) {
+      _operator = _Operations.add;
+    }
     _op1 = (_op1 == 0) ? _op1 = op2 : _calculate(_op1, op2, _operator);
     _display = _op1.asString(true);
     _insertMode = true;

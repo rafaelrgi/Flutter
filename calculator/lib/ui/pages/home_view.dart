@@ -2,10 +2,10 @@ import 'package:calculator/ui/view_models/calculator_view_model.dart';
 import 'package:calculator/ui/widgets/calculator_button.dart';
 import 'package:flutter/material.dart';
 
-class HomeView extends StatelessWidget {
+class CalculatorView extends StatelessWidget {
   //
 
-  const HomeView({super.key});
+  const CalculatorView({super.key});
 
   @override
   Widget build(BuildContext context) {

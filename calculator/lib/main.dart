@@ -37,7 +37,7 @@ class CalculatorApp extends StatelessWidget {
                 shadowColor: Colors.black,
               ),
       ),
-      home: HomeView(),
+      home: CalculatorView(),
     );
   }
 }

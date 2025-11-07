@@ -23,7 +23,7 @@ extension DoubleUtils on double {
     }
 
     final formatter = NumberFormat('#,##0', 'pt_BR');
-    final integer = formatter.format(this);
+    final integer = this < 1 ? '0' : formatter.format(this);
     var fractional = '';
     if (precision < 0) {
       fractional = toString();
