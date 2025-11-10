@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:isolate';
 import 'dart:math';
 import 'package:todo/data/repositories/i_todo_repository.dart';
 import 'package:todo/domain/models/todo.dart';
@@ -8,9 +9,13 @@ class TodoRepositoryMemory extends ITodoRepository {
 
   @override
   Future<List<Todo>> fetch() async {
-    final String data = await _fetchFromMem();
-    final todos = Todo.fromJsonList(json.decode(data));
-    return todos;
+    //do the work in another thread
+    return Isolate.run(() async {
+      final todos = Todo.fromJsonList(json.decode(__json));
+      // await Future.delayed(const Duration(seconds: 1));
+      // for (var i = 0; i < 10000; i++) print(i);
+      return todos;
+    });
   }
 
   @override
@@ -25,11 +30,6 @@ class TodoRepositoryMemory extends ITodoRepository {
   @override
   Future<void> remove(int id) async {
     Future.delayed(const Duration(seconds: 1));
-  }
-
-  Future<String> _fetchFromMem() async {
-    await Future.delayed(const Duration(seconds: 1));
-    return __json;
   }
 }
 

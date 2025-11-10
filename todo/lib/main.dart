@@ -3,7 +3,6 @@ import 'package:todo/ui/pages/login_view.dart';
 import 'package:flutter/material.dart';
 import 'package:todo/ui/pages/todos_view.dart';
 
-
 void main() {
   runApp(TodoApp());
 }
@@ -18,6 +17,7 @@ class TodoApp extends StatelessWidget {
     final app = MaterialApp(
       title: 'ToDo',
       debugShowCheckedModeBanner: false,
+      //UNDONE: change theme
       theme: AppTheme.buildTheme(),
       initialRoute: '/',
       routes: {

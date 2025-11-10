@@ -56,13 +56,15 @@ class TodosView extends StatelessWidget {
   }
 
   Future<void> _changeDataSource(BuildContext ctx) async {
-    await showDialog(
+    if (!await showDialog(
       context: ctx,
       barrierDismissible: false,
       builder: (BuildContext ctx) {
         return Dialog(child: ChooseDatasource());
       },
-    );
+    )) {
+      return;
+    }
     if (ctx.mounted) _loadData(ctx);
   }
 
@@ -89,6 +91,14 @@ class TodosView extends StatelessWidget {
             tooltip: 'Change data source',
             onPressed: () => _changeDataSource(ctx),
           ),
+          /*
+          //UNDONE: change theme
+          IconButton(
+            icon: Icon(Icons.brightness_6_outlined),
+            tooltip: 'Change theme',
+            onPressed: () => UiUtils.toast(ctx, "Ñot implemented yet!"),
+          ),
+          */
         ],
       ),
       body: body,

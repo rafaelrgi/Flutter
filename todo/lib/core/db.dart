@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -20,11 +18,7 @@ class DB {
     final path = join(await getDatabasesPath(), 'todo.db');
     //await deleteDatabase(path); //await File(path).delete();
 
-    _database = await openDatabase(
-      join(await getDatabasesPath(), 'todo.db'),
-      version: 1,
-      onCreate: _onCreate,
-    );
+    _database = await openDatabase(path, version: 1, onCreate: _onCreate);
     return _database!;
   }
 

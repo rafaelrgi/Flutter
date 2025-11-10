@@ -17,7 +17,7 @@ class AppTheme {
     final color2 = isDarkTheme ? colorDark2 : colorLight2;
 
     return ThemeData(
-      //platform: TargetPlatform.iOS,
+      platform: TargetPlatform.iOS,
       //platform: TargetPlatform.android,
       colorScheme: ColorScheme.fromSeed(
         seedColor: color,

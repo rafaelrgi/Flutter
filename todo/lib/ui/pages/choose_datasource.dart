@@ -55,7 +55,7 @@ class ChooseDatasource extends StatelessWidget {
                           Align(
                             alignment: Alignment.centerRight,
                             child: TextButton(
-                              onPressed: () => Navigator.of(ctx).pop(),
+                              onPressed: () => Navigator.of(ctx).pop(false),
                               child: const Text('Cancel'),
                             ),
                           ),
@@ -79,12 +79,15 @@ class DataSourceRadioBtn extends RadioBtn {
   });
 
   factory DataSourceRadioBtn.fromDataSource(BuildContext ctx, DataSources ds) {
+    final selected = (ds == todoViewModel.dataSource);
     return DataSourceRadioBtn(
       text: ds.asString(),
-      selected: ds == todoViewModel.dataSource,
+      selected: selected,
       onPressed: () async {
         await todoViewModel.setDataSource(ds);
-        if (ctx.mounted) Navigator.of(ctx).pop();
+        if (!ctx.mounted) return;
+        //returns true only when change to another ds
+        Navigator.of(ctx).pop(!selected);
       },
     );
   }
