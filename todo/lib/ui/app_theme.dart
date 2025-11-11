@@ -9,11 +9,11 @@ class AppTheme {
   static const colorDark = Colors.blueGrey;
   static final colorDark2 = Colors.blueGrey.shade900;
   static const bool _whiteTitle = true;
-  //static final isDarkTheme =true; //TODO: MediaQuery.of(context).platformBrightness == Brightness.dark;
+  //static final isDarkTheme = MediaQuery.of(context).platformBrightness == Brightness.dark;
 
   static ThemeData buildTheme(bool isDarkTheme) {
     final color = isDarkTheme ? colorDark : colorLight;
-    final color2 = isDarkTheme ? colorDark2 : colorLight2;
+    //final color2 = isDarkTheme ? colorDark2 : colorLight2;
 
     return ThemeData(
       platform: TargetPlatform.iOS,

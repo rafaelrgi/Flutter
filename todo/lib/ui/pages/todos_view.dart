@@ -1,6 +1,7 @@
 import 'package:todo/core/config.dart';
 import 'package:todo/core/ui_utils.dart';
 import 'package:todo/domain/models/todo.dart';
+import 'package:todo/main.dart';
 import 'package:todo/ui/pages/choose_datasource.dart';
 import 'package:todo/ui/pages/todo_view.dart';
 import 'package:todo/ui/view_models/todo_view_model.dart';
@@ -91,14 +92,12 @@ class TodosView extends StatelessWidget {
             tooltip: 'Change data source',
             onPressed: () => _changeDataSource(ctx),
           ),
-          /*
-          //UNDONE: change theme
+
           IconButton(
             icon: Icon(Icons.brightness_6_outlined),
             tooltip: 'Change theme',
-            onPressed: () => UiUtils.toast(ctx, "Ñot implemented yet!"),
+            onPressed: () => _changeTheme(ctx),
           ),
-          */
         ],
       ),
       body: body,
@@ -106,6 +105,18 @@ class TodosView extends StatelessWidget {
           ? _floatingActionButton(ctx)
           : const SizedBox(),
     );
+  }
+
+  Future<void> _changeTheme(BuildContext ctx) async {
+    int i = (appController.themeMode.index + 1);
+    if (i >= ThemeMode.values.length) {
+      i = 0;
+    }
+    ThemeMode val = ThemeMode.values[i];
+    await Config.setTheme(val);
+    appController.themeMode = val;
+    if (!ctx.mounted) return;
+    UiUtils.toast(ctx, appController.themeMode.toString());
   }
 
   Widget _floatingActionButton(BuildContext ctx) {

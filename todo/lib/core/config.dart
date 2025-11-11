@@ -1,12 +1,23 @@
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum DataSources { memory, remoteApi, localDb, none }
 
-//Singleton? Config config = Config();
-
 class Config {
   //
+  static const _themeKey = 'Theme';
   static const _datasourceKey = 'DataSource';
+
+  static Future<ThemeMode> getTheme() async {
+    final prefs = await SharedPreferences.getInstance();
+    int i = prefs.getInt(_themeKey) ?? 0;
+    return ThemeMode.values[i];
+  }
+
+  static Future<void> setTheme(ThemeMode val) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_themeKey, val.index);
+  }
 
   static Future<DataSources> getDataSource() async {
     final prefs = await SharedPreferences.getInstance();
@@ -18,9 +29,9 @@ class Config {
     }
   }
 
-  static Future<void> setDataSource(DataSources ds) async {
+  static Future<void> setDataSource(DataSources val) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(_datasourceKey, ds.index);
+    await prefs.setInt(_datasourceKey, val.index);
   }
 }
 
