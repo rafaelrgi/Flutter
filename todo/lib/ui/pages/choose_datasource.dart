@@ -8,6 +8,8 @@ class ChooseDatasource extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
+    final todoViewModel = TodoViewModel.instance;
+
     return ListenableBuilder(
       listenable: todoViewModel,
       builder: (context, __) {
@@ -79,6 +81,8 @@ class DataSourceRadioBtn extends RadioBtn {
   });
 
   factory DataSourceRadioBtn.fromDataSource(BuildContext ctx, DataSources ds) {
+    final todoViewModel = TodoViewModel.instance;
+
     final selected = (ds == todoViewModel.dataSource);
     return DataSourceRadioBtn(
       text: ds.asString(),

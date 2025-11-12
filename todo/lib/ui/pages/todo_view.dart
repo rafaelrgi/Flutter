@@ -5,24 +5,24 @@ import 'package:todo/core/ui_utils.dart';
 
 class TodoView extends StatelessWidget {
   //
-  final int index;
+  static TodoViewModel get todoViewModel => TodoViewModel.instance;
 
-  const TodoView({super.key, required this.index});
+  final int index;
+  final Todo _todo;
+
+  TodoView({super.key, required this.index})
+    : _todo = todoViewModel.copyOrCreate(index);
 
   Future<void> saveItem(BuildContext ctx, int index, Todo todo) async {
     var error = await todoViewModel.saveItem(index, todo);
+    if (!ctx.mounted) return;
     //error
     if (error.isNotEmpty) {
-      if (ctx.mounted) {
-        UiUtils.errorDialog(ctx, error, 'Saving failed!');
-        return;
-      }
+      UiUtils.errorDialog(ctx, error, 'Saving failed!');
+      return;
     }
     //sucess
-    if (ctx.mounted) {
-      Navigator.of(ctx).pop();
-      UiUtils.toast(ctx, 'Item saved!');
-    }
+    Navigator.of(ctx).pop();
   }
 
   void removeItem(BuildContext ctx, int index) {
@@ -46,9 +46,6 @@ class TodoView extends StatelessWidget {
 
   @override
   Widget build(BuildContext _) {
-    Todo todo = index >= 0 ? Todo.copy(todoViewModel.todos[index]) : Todo();
-    if (todo.title.isEmpty) todo.title = 'Todo';
-
     return ListenableBuilder(
       listenable: todoViewModel,
       builder: (context, child) {
@@ -78,7 +75,7 @@ class TodoView extends StatelessWidget {
                               horizontal: 16,
                             ),
                             child: Text(
-                              todo.title,
+                              _todo.title,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
@@ -101,11 +98,11 @@ class TodoView extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           InkWell(
-                            onTap: () => todoViewModel.onCheckItem(todo),
+                            onTap: () => todoViewModel.onCheckItem(_todo),
                             child: Row(
                               children: [
                                 Icon(
-                                  todo.isDone
+                                  _todo.isDone
                                       ? Icons.check_box
                                       : Icons.check_box_outline_blank,
                                   color: Theme.of(context).dividerColor,
@@ -116,12 +113,12 @@ class TodoView extends StatelessWidget {
                           ),
                           const SizedBox(height: 16),
                           TextFormField(
-                            initialValue: todo.title,
+                            initialValue: _todo.title,
                             onChanged: (value) =>
-                                todoViewModel.onItemTitleChange(todo, value),
+                                todoViewModel.onItemTitleChange(_todo, value),
                             decoration: InputDecoration(
                               labelText: 'Todo',
-                              errorText: todo.title.trim().isNotEmpty
+                              errorText: _todo.title.trim().isNotEmpty
                                   ? null
                                   : 'Required field',
                               border: const OutlineInputBorder(),
@@ -137,7 +134,8 @@ class TodoView extends StatelessWidget {
                               ),
                               const SizedBox(width: 16),
                               TextButton(
-                                onPressed: () => saveItem(context, index, todo),
+                                onPressed: () =>
+                                    saveItem(context, index, _todo),
                                 child: const Text('Save'),
                               ),
                             ],

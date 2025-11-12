@@ -1,11 +1,22 @@
+import 'package:get_it/get_it.dart';
 import 'package:todo/core/config.dart';
-import 'package:todo/ui/appTheme.dart';
+import 'package:todo/ui/app_theme.dart';
 import 'package:todo/ui/pages/login_view.dart';
 import 'package:flutter/material.dart';
 import 'package:todo/ui/pages/todos_view.dart';
+import 'package:todo/ui/view_models/login_view_model.dart';
+import 'package:todo/ui/view_models/todo_view_model.dart';
 
 main() {
+  _configureDependencies();
   runApp(TodoApp());
+}
+
+//------------------------------------------------------------------------------
+void _configureDependencies() {
+  final getIt = GetIt.instance;
+  getIt.registerCachedFactory(() => LoginViewModel());
+  getIt.registerLazySingleton<TodoViewModel>(() => TodoViewModel());
 }
 
 //------------------------------------------------------------------------------
@@ -37,8 +48,8 @@ class TodoApp extends StatelessWidget {
     );
   }
 }
-//------------------------------------------------------------------------------
 
+//------------------------------------------------------------------------------
 final appController = AppController();
 
 class AppController extends ChangeNotifier {

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:todo/domain/todo_domain.dart';
 import 'package:todo/domain/models/todo.dart';
 import 'package:todo/core/config.dart';
 
-//Singleton para facilitar; UNDONE: implementar injeção de dependência
-final todoViewModel = TodoViewModel();
-
 class TodoViewModel extends ChangeNotifier {
   //
   bool _isLoading = false;
+
+  static TodoViewModel get instance => GetIt.instance<TodoViewModel>();
 
   List<Todo> get todos => TodoDomain.todos;
   bool get isLoading => _isLoading;
@@ -43,8 +43,10 @@ class TodoViewModel extends ChangeNotifier {
   }
 
   Future<String> checkAndSaveItem(int index) async {
+    //_isLoading = true;    notifyListeners();    try {
     todos[index].isDone = !todos[index].isDone;
     String error = await saveItem(index, todos[index]);
+    notifyListeners();
 
     //if failed, restore state
     if (error.isNotEmpty) {
@@ -52,6 +54,7 @@ class TodoViewModel extends ChangeNotifier {
       notifyListeners();
     }
     return error;
+    //} finally {      _isLoading = false;      notifyListeners();    }
   }
 
   Future<String> removeItem(int index) async {
@@ -87,5 +90,13 @@ class TodoViewModel extends ChangeNotifier {
       notifyListeners();
     }
     return '';
+  }
+
+  Todo copyOrCreate(int index) {
+    Todo todo = (index >= 0 ? Todo.copy(todos[index]) : Todo());
+    if (todo.title.isEmpty) {
+      todo.title = 'Todo';
+    }
+    return todo;
   }
 }

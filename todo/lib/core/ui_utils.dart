@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 
 class UiUtils {
   //
-  static void toast(BuildContext ctx, String text) {
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) =>
-          ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text(text))),
+  static void toast(BuildContext ctx, String text, [bool clearPending = true]) {
+    final messenger = ScaffoldMessenger.of(ctx);
+    if (clearPending) {
+      messenger.clearSnackBars();
+    }
+    messenger.showSnackBar(
+      SnackBar(content: Text(text), duration: Durations.extralong3),
     );
   }
 

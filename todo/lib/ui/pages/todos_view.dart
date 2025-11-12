@@ -9,8 +9,8 @@ import 'package:flutter/material.dart';
 
 class TodosView extends StatelessWidget {
   //
-
   static const String _title = 'ToDo List';
+  TodoViewModel get todoViewModel => TodoViewModel.instance;
 
   const TodosView({super.key});
 
@@ -47,8 +47,6 @@ class TodosView extends StatelessWidget {
 
     if (error.isNotEmpty) {
       UiUtils.alertDialog(ctx, error, 'Saving failed');
-    } else {
-      UiUtils.toast(ctx, 'Item saved!');
     }
   }
 
@@ -145,7 +143,8 @@ class TodosView extends StatelessWidget {
     return ListenableBuilder(
       listenable: todoViewModel,
       builder: (context, __) {
-        return ListView.builder(
+        return //todoViewModel.isLoading? Center(child: CircularProgressIndicator()):
+        ListView.builder(
           padding: const EdgeInsets.fromLTRB(8, 8, 8, 160),
           itemCount: todoViewModel.todos.length,
           itemBuilder: (_, index) {

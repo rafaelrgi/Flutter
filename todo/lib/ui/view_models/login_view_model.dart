@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-
-//Singleton para facilitar; UNDONE: implementar injeção de dependência
-final loginViewModel = LoginViewModel();
+import 'package:get_it/get_it.dart';
 
 class LoginViewModel extends ChangeNotifier {
   //
+  static LoginViewModel get instance => GetIt.instance<LoginViewModel>();
 
   bool _isLoggedIn = false;
   final loginCtrl = TextEditingController();
@@ -16,7 +15,7 @@ class LoginViewModel extends ChangeNotifier {
   String? passwordError;
   bool get isLoggedIn => _isLoggedIn;
 
-  void onSubmit() {
+  bool onSubmit() {
     final login = loginCtrl.text;
     final password = passwordCtrl.text;
 
@@ -25,7 +24,7 @@ class LoginViewModel extends ChangeNotifier {
     passwordError = password.isNotEmpty ? null : 'Please inform your password';
 
     if (loginError == null && passwordError == null) {
-      //UNDONE: check login credentials
+      //we don't check login credentials, anything is good!
       _isLoggedIn = true;
     }
 
@@ -36,7 +35,7 @@ class LoginViewModel extends ChangeNotifier {
     }
 
     notifyListeners();
-    return;
+    return _isLoggedIn;
   }
 
   @override
