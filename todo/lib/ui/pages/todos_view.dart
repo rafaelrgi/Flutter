@@ -67,26 +67,13 @@ class TodosView extends StatelessWidget {
     if (ctx.mounted) _loadData(ctx);
   }
 
-  IconData _dataSourceIcon() {
-    switch (todoViewModel.dataSource) {
-      case DataSources.memory:
-        return Icons.memory_outlined;
-      case DataSources.remoteApi:
-        return Icons.cloud_outlined;
-      case DataSources.localDb:
-        return Icons.sd_storage_outlined;
-      case DataSources.none:
-        return Icons.cable_sharp;
-    }
-  }
-
   Widget _page(BuildContext ctx, bool floatingActionBtn, Widget body) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(_title),
         actions: [
           IconButton(
-            icon: Icon(_dataSourceIcon()),
+            icon: Icon(todoViewModel.dataSource.iconData),
             tooltip: 'Change data source',
             onPressed: () => _changeDataSource(ctx),
           ),
@@ -142,7 +129,7 @@ class TodosView extends StatelessWidget {
   Widget _todoList(BuildContext ctx) {
     return ListenableBuilder(
       listenable: todoViewModel,
-      builder: (context, __) {
+      builder: (context, _) {
         return //todoViewModel.isLoading? Center(child: CircularProgressIndicator()):
         ListView.builder(
           padding: const EdgeInsets.fromLTRB(8, 8, 8, 160),

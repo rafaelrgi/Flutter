@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum DataSources { memory, remoteApi, localDb, none }
+enum DataSources {
+  memory(Icons.memory_outlined, 'Memory'),
+  remoteApi(Icons.cloud_outlined, 'Remote API'),
+  localDb(Icons.sd_storage_outlined, 'Local DB'),
+  none(Icons.cable_sharp, '');
+
+  const DataSources(this.iconData, this.text);
+  final IconData iconData;
+  final String text;
+}
 
 class Config {
   //
@@ -32,20 +41,5 @@ class Config {
   static Future<void> setDataSource(DataSources val) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_datasourceKey, val.index);
-  }
-}
-
-extension DataSourcesExtensions on DataSources {
-  String asString() {
-    switch (this) {
-      case DataSources.memory:
-        return 'Memory';
-      case DataSources.remoteApi:
-        return 'Remote API';
-      case DataSources.localDb:
-        return 'Local DB';
-      case DataSources.none:
-        return '';
-    }
   }
 }

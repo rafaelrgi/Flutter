@@ -22,7 +22,7 @@ class DB {
     return _database!;
   }
 
-  static void _onCreate(db, versao) async {
+  static void _onCreate(Database db, int version) async {
     await db.execute(createTodo);
   }
 

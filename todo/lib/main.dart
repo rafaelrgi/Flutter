@@ -7,7 +7,7 @@ import 'package:todo/ui/pages/todos_view.dart';
 import 'package:todo/ui/view_models/login_view_model.dart';
 import 'package:todo/ui/view_models/todo_view_model.dart';
 
-main() {
+void main() {
   _configureDependencies();
   runApp(TodoApp());
 }
@@ -28,7 +28,7 @@ class TodoApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListenableBuilder(
       listenable: appController,
-      builder: (context, __) {
+      builder: (context, _) {
         return MaterialApp(
           title: 'ToDo',
           debugShowCheckedModeBanner: false,
@@ -62,7 +62,7 @@ class AppController extends ChangeNotifier {
     _init();
   }
 
-  _init() async {
+  void _init() async {
     themeMode = await Config.getTheme();
   }
 

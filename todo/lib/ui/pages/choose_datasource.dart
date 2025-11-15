@@ -12,7 +12,7 @@ class ChooseDatasource extends StatelessWidget {
 
     return ListenableBuilder(
       listenable: todoViewModel,
-      builder: (context, __) {
+      builder: (context, _) {
         return todoViewModel.isLoading
             ? const Padding(
                 padding: EdgeInsetsGeometry.all(64),
@@ -75,7 +75,7 @@ class ChooseDatasource extends StatelessWidget {
 class DataSourceRadioBtn extends RadioBtn {
   const DataSourceRadioBtn({
     super.key,
-    required super.text,
+    required super.dataSource,
     required super.selected,
     required super.onPressed,
   });
@@ -85,12 +85,12 @@ class DataSourceRadioBtn extends RadioBtn {
 
     final selected = (ds == todoViewModel.dataSource);
     return DataSourceRadioBtn(
-      text: ds.asString(),
+      dataSource: ds,
       selected: selected,
       onPressed: () async {
         await todoViewModel.setDataSource(ds);
         if (!ctx.mounted) return;
-        //returns true only when change to another ds
+        //returns true only when change the ds
         Navigator.of(ctx).pop(!selected);
       },
     );
@@ -99,30 +99,35 @@ class DataSourceRadioBtn extends RadioBtn {
 
 class RadioBtn extends StatelessWidget {
   //
-  final String text;
+  final DataSources dataSource;
   final void Function() onPressed;
   final bool selected;
 
   const RadioBtn({
     super.key,
-    required this.text,
+    required this.dataSource,
     required this.selected,
     required this.onPressed,
   });
 
   @override
   Widget build(BuildContext ctx) {
+    final Color color = (Theme.of(ctx).textTheme.bodySmall!.color)!;
+    final IconData radioIco = selected
+        ? Icons.radio_button_checked
+        : Icons.radio_button_off_outlined;
+
     return TextButton(
       onPressed: onPressed,
       child: Row(
         children: [
-          Icon(
-            selected
-                ? Icons.radio_button_checked
-                : Icons.radio_button_off_outlined,
-            color: Theme.of(ctx).textTheme.bodySmall?.color,
+          Icon(radioIco, color: color),
+          Text(
+            '   ${dataSource.text}',
+            style: Theme.of(ctx).textTheme.bodyMedium,
           ),
-          Text('   $text', style: Theme.of(ctx).textTheme.bodyMedium),
+          const SizedBox(width: 16),
+          Icon(dataSource.iconData, color: color),
         ],
       ),
     );
