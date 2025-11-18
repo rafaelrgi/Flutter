@@ -1,61 +1,70 @@
+import 'package:todo/ui/pages/todos_view.dart';
 import 'package:todo/ui/view_models/login_view_model.dart';
 import 'package:flutter/material.dart';
 
 class LoginView extends StatelessWidget {
   //
-
   const LoginView({super.key});
 
   void _onSubmit(BuildContext ctx) {
     final loginViewModel = LoginViewModel.instance;
-    if (loginViewModel.onSubmit()) {
-      Navigator.of(ctx).pushReplacementNamed('/home');
+    final navigator = Navigator.of(ctx);
+
+    if (loginViewModel.doLogin()) {
+      navigator.pushReplacement(
+        PageRouteBuilder(
+          transitionDuration: Duration(milliseconds: 650),
+          pageBuilder: (_, _, _) => TodosView(),
+        ),
+      );
     }
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext ctx) {
     final loginViewModel = LoginViewModel.instance;
+    final theme = Theme.of(ctx);
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('ToDo')),
-      body: Center(
-        heightFactor: 1.5,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+    return SafeArea(
+      child: Scaffold(
+        body: Padding(
+          padding: const .symmetric(horizontal: 16),
           child: SingleChildScrollView(
             reverse: true,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: .center,
+              mainAxisAlignment: .center,
               children: [
-                Text(
-                  'Login',
-                  style: Theme.of(context).textTheme.headlineMedium,
+                const SizedBox(height: 16),
+                Hero(
+                  tag: 'icon',
+                  child: Image.asset('assets/icons/app_icon_m.png'),
                 ),
                 const SizedBox(height: 16),
+                Text('Todo', style: theme.textTheme.headlineLarge),
+                const SizedBox(height: 32),
                 ListenableBuilder(
                   listenable: loginViewModel,
-                  builder: (BuildContext context, Widget? child) {
+                  builder: (_, _) {
                     return Column(
                       children: [
                         TextField(
-                          controller: loginViewModel.loginCtrl,
+                          onChanged: loginViewModel.setLogin,
                           focusNode: loginViewModel.loginFocus,
                           decoration: InputDecoration(
                             labelText: 'Login',
-                            errorText: loginViewModel.loginError,
+                            errorText: loginViewModel.validateLogin(),
                             border: const OutlineInputBorder(),
                           ),
                         ),
                         const SizedBox(height: 32),
                         TextField(
-                          controller: loginViewModel.passwordCtrl,
+                          onChanged: loginViewModel.setPassword,
                           focusNode: loginViewModel.passwordFocus,
                           obscureText: true,
                           decoration: InputDecoration(
                             labelText: 'Password',
-                            errorText: loginViewModel.passwordError,
+                            errorText: loginViewModel.validatepassword(),
                             border: const OutlineInputBorder(),
                           ),
                         ),
@@ -65,9 +74,11 @@ class LoginView extends StatelessWidget {
                 ),
                 const SizedBox(height: 32),
                 ElevatedButton(
-                  onPressed: () => _onSubmit(context),
+                  onPressed: () => _onSubmit(ctx),
                   child: const Text('Log In'),
                 ),
+                const SizedBox(height: 64),
+                const Text('*Type anything in the fields Login and Password'),
               ],
             ),
           ),

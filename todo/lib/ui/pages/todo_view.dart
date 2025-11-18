@@ -11,9 +11,11 @@ class TodoView extends StatelessWidget {
   final Todo _todo;
 
   TodoView({super.key, required this.index})
-    : _todo = todoViewModel.copyOrCreate(index);
+    : _todo = todoViewModel.getForEditing(index);
 
-  Future<void> saveItem(BuildContext ctx, int index, Todo todo) async {
+  Future<void> _saveItem(BuildContext ctx, int index, Todo todo) async {
+    if (!todoViewModel.canSave(_todo)) return;
+
     var error = await todoViewModel.saveItem(index, todo);
     if (!ctx.mounted) return;
     //error
@@ -25,33 +27,36 @@ class TodoView extends StatelessWidget {
     Navigator.of(ctx).pop();
   }
 
-  void removeItem(BuildContext ctx, int index) {
+  void _removeItem(BuildContext ctx, int index) {
+    final navigator = Navigator.of(ctx);
+
     UiUtils.yesNoDialog(ctx, 'Confirm item deletion?', 'Delete item', () async {
-      Navigator.of(ctx).pop();
-      //error
+      navigator.pop();
       var error = await todoViewModel.removeItem(index);
+      if (!ctx.mounted) return;
+
+      //error
       if (error.isNotEmpty) {
-        if (ctx.mounted) {
-          UiUtils.errorDialog(ctx, error, 'Deletion failed!');
-        }
+        UiUtils.errorDialog(ctx, error, 'Deletion failed!');
         return;
       }
       //sucess
-      if (ctx.mounted) {
-        Navigator.of(ctx).pop();
-        UiUtils.toast(ctx, 'Item deleted');
-      }
+      navigator.pop();
+      UiUtils.toast(ctx, 'Item deleted');
     });
   }
 
   @override
-  Widget build(BuildContext _) {
+  Widget build(_) {
     return ListenableBuilder(
       listenable: todoViewModel,
-      builder: (context, child) {
+      builder: (ctx, child) {
+        final theme = Theme.of(ctx);
+        final navigator = Navigator.of(ctx);
+
         return todoViewModel.isLoading
             ? const Padding(
-                padding: EdgeInsetsGeometry.all(64),
+                padding: .all(64),
                 child: Center(
                   heightFactor: 1,
                   widthFactor: 1,
@@ -60,30 +65,27 @@ class TodoView extends StatelessWidget {
               )
             : SingleChildScrollView(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: .start,
+                  mainAxisAlignment: .start,
                   children: [
                     Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisSize: .max,
+                      mainAxisAlignment: .spaceBetween,
                       children: [
                         Flexible(
                           flex: 5,
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(
+                            padding: const .symmetric(
                               vertical: 8,
                               horizontal: 16,
                             ),
-                            child: Text(
-                              _todo.title,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                            child: Text(_todo.title, overflow: .ellipsis),
                           ),
                         ),
                         Flexible(
                           flex: 1,
                           child: IconButton(
-                            onPressed: () => removeItem(context, index),
+                            onPressed: () => _removeItem(ctx, index),
                             tooltip: 'Delete this todo item',
                             icon: Icon(Icons.delete),
                           ),
@@ -94,8 +96,8 @@ class TodoView extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: .start,
+                        mainAxisAlignment: .start,
                         children: [
                           InkWell(
                             onTap: () => todoViewModel.onCheckItem(_todo),
@@ -105,7 +107,7 @@ class TodoView extends StatelessWidget {
                                   _todo.isDone
                                       ? Icons.check_box
                                       : Icons.check_box_outline_blank,
-                                  color: Theme.of(context).dividerColor,
+                                  color: theme.dividerColor,
                                 ),
                                 const Text('   Completed?'),
                               ],
@@ -114,28 +116,26 @@ class TodoView extends StatelessWidget {
                           const SizedBox(height: 16),
                           TextFormField(
                             initialValue: _todo.title,
-                            onChanged: (value) =>
-                                todoViewModel.onItemTitleChange(_todo, value),
+                            onChanged: (value) => _todo.title = value,
                             decoration: InputDecoration(
                               labelText: 'Todo',
-                              errorText: _todo.title.trim().isNotEmpty
-                                  ? null
-                                  : 'Required field',
+                              errorText: todoViewModel.validateTitle(_todo),
                               border: const OutlineInputBorder(),
                             ),
                           ),
                           const SizedBox(height: 32),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisAlignment: .end,
                             children: [
                               TextButton(
-                                onPressed: () => Navigator.of(context).pop(),
+                                onPressed: () => navigator.pop(),
                                 child: const Text('Cancel'),
                               ),
                               const SizedBox(width: 16),
                               TextButton(
-                                onPressed: () =>
-                                    saveItem(context, index, _todo),
+                                onPressed: todoViewModel.canSave(_todo)
+                                    ? () => _saveItem(ctx, index, _todo)
+                                    : null,
                                 child: const Text('Save'),
                               ),
                             ],

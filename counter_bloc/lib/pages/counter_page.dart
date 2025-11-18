@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CounterPage extends StatelessWidget {
   //
-  //just a blank line for readability
   const CounterPage({super.key});
 
   @override

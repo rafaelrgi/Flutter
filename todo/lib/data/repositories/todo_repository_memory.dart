@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:todo/data/repositories/i_todo_repository.dart';
 import 'package:todo/domain/models/todo.dart';
 
-class TodoRepositoryMemory extends ITodoRepository {
+class TodoRepositoryMemory implements ITodoRepository {
   //
 
   @override
@@ -12,6 +12,7 @@ class TodoRepositoryMemory extends ITodoRepository {
     //do the work in another thread
     return Isolate.run(() async {
       final todos = Todo.fromJsonList(json.decode(__json));
+      //simulate a huge workload causing a huge delay
       // await Future.delayed(const Duration(seconds: 1));
       // for (var i = 0; i < 10000; i++) print(i);
       return todos;

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class AppTheme {
   //
@@ -18,9 +17,9 @@ class AppTheme {
     return ThemeData(
       platform: TargetPlatform.iOS,
       //platform: TargetPlatform.android,
-      colorScheme: ColorScheme.fromSeed(
+      colorScheme: .fromSeed(
         seedColor: color,
-        brightness: isDarkTheme ? Brightness.dark : Brightness.light,
+        brightness: isDarkTheme ? .dark : .light,
       ),
       appBarTheme: _appBarTheme(isDarkTheme),
       inputDecorationTheme: InputDecorationTheme(
@@ -30,8 +29,6 @@ class AppTheme {
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(width: 2, color: color),
         ),
-        //errorBorder: OutlineInputBorder(borderSide: BorderSide(width: 2, color: Colors.red)),
-        //disabledBorder: OutlineInputBorder(borderSide: BorderSide(width: 2, color: Colors.grey)),
       ),
       dialogTheme: _dialogTheme(isDarkTheme),
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -39,13 +36,13 @@ class AppTheme {
           enableFeedback: false,
           backgroundColor: color,
           foregroundColor: _whiteTitle ? Colors.white : Colors.black,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+          shape: RoundedRectangleBorder(borderRadius: .circular(2)),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: ElevatedButton.styleFrom(
           enableFeedback: false,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+          shape: RoundedRectangleBorder(borderRadius: .circular(2)),
         ),
       ),
       iconButtonTheme: IconButtonThemeData(
@@ -57,6 +54,7 @@ class AppTheme {
       textButtonTheme: TextButtonThemeData(
         style: IconButton.styleFrom(enableFeedback: false),
       ),
+      listTileTheme: ListTileThemeData(enableFeedback: false),
     );
   }
 
@@ -64,21 +62,10 @@ class AppTheme {
     //Keep the default color for dark theme
     return isDarkTheme
         ? AppBarTheme()
-        /*
-            backgroundColor: Colors.black,
-            foregroundColor: _whiteTitle ? Colors.white : Colors.black,
-            systemOverlayStyle: _whiteTitle
-                ? SystemUiOverlayStyle.light
-                : SystemUiOverlayStyle.dark,
-            elevation: 4,
-            shadowColor: Colors.black,
-          )*/
         : AppBarTheme(
             backgroundColor: colorLight,
             foregroundColor: _whiteTitle ? Colors.white : Colors.black,
-            systemOverlayStyle: _whiteTitle
-                ? SystemUiOverlayStyle.light
-                : SystemUiOverlayStyle.dark,
+            systemOverlayStyle: _whiteTitle ? .light : .dark,
             elevation: 4,
             shadowColor: Colors.black,
           );
@@ -87,9 +74,7 @@ class AppTheme {
   static DialogThemeData _dialogTheme(bool isDarkTheme) {
     return DialogThemeData(
       backgroundColor: isDarkTheme ? colorDark2 : Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(4)),
-      ),
+      shape: const RoundedRectangleBorder(borderRadius: .all(.circular(4))),
     );
   }
 }

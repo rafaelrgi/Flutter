@@ -2,7 +2,7 @@ import 'package:todo/core/db.dart';
 import 'package:todo/domain/models/todo.dart';
 import 'package:todo/data/repositories/i_todo_repository.dart';
 
-class TodoRepositoryDb extends ITodoRepository {
+class TodoRepositoryDb implements ITodoRepository {
   //
   @override
   Future<List<Todo>> fetch() async {

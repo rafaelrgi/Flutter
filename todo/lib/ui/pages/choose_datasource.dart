@@ -9,37 +9,39 @@ class ChooseDatasource extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
     final todoViewModel = TodoViewModel.instance;
+    final navigator = Navigator.of(ctx);
 
     return ListenableBuilder(
       listenable: todoViewModel,
       builder: (context, _) {
         return todoViewModel.isLoading
+            //
+            // Loading
             ? const Padding(
-                padding: EdgeInsetsGeometry.all(64),
+                padding: .all(64),
                 child: Center(
                   heightFactor: 1,
                   widthFactor: 1,
                   child: CircularProgressIndicator(),
                 ),
               )
+            //
+            //Has data
             : SingleChildScrollView(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: .start,
+                  mainAxisAlignment: .start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8,
-                        horizontal: 16,
-                      ),
+                      padding: const .symmetric(vertical: 8, horizontal: 16),
                       child: const Text('Choose the datasource:'),
                     ),
                     Divider(height: 8, thickness: 1, color: Colors.grey),
                     Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const .all(16.0),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: .start,
+                        mainAxisAlignment: .start,
                         children: [
                           DataSourceRadioBtn.fromDataSource(
                             ctx,
@@ -55,9 +57,9 @@ class ChooseDatasource extends StatelessWidget {
                           ),
                           Divider(height: 8, thickness: 1, color: Colors.grey),
                           Align(
-                            alignment: Alignment.centerRight,
+                            alignment: .centerRight,
                             child: TextButton(
-                              onPressed: () => Navigator.of(ctx).pop(false),
+                              onPressed: () => navigator.pop(false),
                               child: const Text('Cancel'),
                             ),
                           ),
@@ -82,6 +84,7 @@ class DataSourceRadioBtn extends RadioBtn {
 
   factory DataSourceRadioBtn.fromDataSource(BuildContext ctx, DataSources ds) {
     final todoViewModel = TodoViewModel.instance;
+    final navigator = Navigator.of(ctx);
 
     final selected = (ds == todoViewModel.dataSource);
     return DataSourceRadioBtn(
@@ -91,7 +94,7 @@ class DataSourceRadioBtn extends RadioBtn {
         await todoViewModel.setDataSource(ds);
         if (!ctx.mounted) return;
         //returns true only when change the ds
-        Navigator.of(ctx).pop(!selected);
+        navigator.pop(!selected);
       },
     );
   }
@@ -112,7 +115,9 @@ class RadioBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    final Color color = (Theme.of(ctx).textTheme.bodySmall!.color)!;
+    final TextTheme textTheme = (Theme.of(ctx).textTheme);
+    final Color color = (textTheme.bodySmall!.color)!;
+
     final IconData radioIco = selected
         ? Icons.radio_button_checked
         : Icons.radio_button_off_outlined;
@@ -122,10 +127,7 @@ class RadioBtn extends StatelessWidget {
       child: Row(
         children: [
           Icon(radioIco, color: color),
-          Text(
-            '   ${dataSource.text}',
-            style: Theme.of(ctx).textTheme.bodyMedium,
-          ),
+          Text('   ${dataSource.text}', style: textTheme.bodyMedium),
           const SizedBox(width: 16),
           Icon(dataSource.iconData, color: color),
         ],

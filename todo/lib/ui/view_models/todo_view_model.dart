@@ -26,13 +26,15 @@ class TodoViewModel extends ChangeNotifier {
     }
   }
 
-  void onCheckItem(Todo item) {
-    item.isDone = !item.isDone;
-    notifyListeners();
+  String? validateTitle(Todo todo) {
+    if (todo.title.trim().isEmpty) {
+      return 'Required field';
+    }
+    return null;
   }
 
-  void onItemTitleChange(Todo item, String text) {
-    item.title = text;
+  void onCheckItem(Todo item) {
+    item.isDone = !item.isDone;
     notifyListeners();
   }
 
@@ -92,11 +94,16 @@ class TodoViewModel extends ChangeNotifier {
     return '';
   }
 
-  Todo copyOrCreate(int index) {
+  //if editing, copy the item so no change is applied before saving it
+  Todo getForEditing(int index) {
     Todo todo = (index >= 0 ? Todo.copy(todos[index]) : Todo());
     if (todo.title.isEmpty) {
       todo.title = 'Todo';
     }
     return todo;
+  }
+
+  bool canSave(Todo todo) {
+    return validateTitle(todo) == null;
   }
 }
